@@ -1,0 +1,112 @@
+{% extends "project/base.html" %}
+
+
+{% block navigatebar %} 
+<nav class="navbar navbar-light navbar-expand-md bg-light justify-content-md-center justify-content-start">
+    <a class="nav-link" id="sidebarCollapse" type="button"><i class="fa fa-bars fa-lg" aria-hidden="true"></i></a> 
+    <div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsingNavbar2">
+        <ul class="navbar-nav mx-auto text-md-center text-left">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' 'menu'%}">Menu</a>
+            </li>
+            <li class="nav-item my-auto">
+                <a class="nav-link navbar-brand mx-0 d-none d-md-inline" href="{% url 'home'%}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'map_location'%}">Location</a> 
+            </li>
+        </ul>
+        <ul class="nav navbar-nav flex-row justify-content-md-center justify-content-start flex-nowrap">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-shopping-cart"></i> Cart
+                </a>
+               
+                  <div class="dropdown-menu cart" aria-labelledby="navbarDropdownMenuLink">
+                    {% for item in cartItems%}
+                    <div>{{item.entry.name}} x {{item.quantity}}</div>
+                    {% endfor %}
+                    {%if count == 0 %}
+                        <div>No items in cart</div>
+                    {%else%}
+                    <form action="{% url 'payment'%}" method="POST">
+                        <button class="btn btn-primary" name="button" type="submit">checkout</button>
+                        {% csrf_token %}
+                    </form>
+                    {% endif %}
+                  </div>
+              </li>
+        </ul>
+    </div>
+</nav>
+
+
+
+{% endblock %}
+
+
+<!-- {% block page %}
+{% endblock %} -->
+
+{% block content %}
+
+<div class="wrapper">
+ <!-- Sidebar -->
+ <nav id="sidebar">
+
+    <ul class="list-unstyled components">
+        <p>Hello, <span id = "id_logged_in_user_name">{{ user.first_name }} {{ user.last_name }}</span></p>
+        <li>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'profile' %}">Profile</a>
+        </li>
+        <li  class="active">
+            <a href="{% url 'orders' %}">Orders</a>
+        </li>
+        <li>
+            <a href="{% url 'logout' %}" id = "id_nav_logout">Logout</a> 
+        </li>
+    </ul>
+</nav>
+
+    <!-- Page Content -->
+    <div class="mainContent">
+        {% for order in orders%} 
+            <div>
+            <a class = "order" href = "{% url 'order' order.id%}">
+                <div class="order_left">{{restaurant_name}}</div>
+                <div class="order_left">${{order.amount}}  #Ordered on {{order.order_time|date:"m/d/Y h:iA"}}</div>
+                <div class="order_left">Status: 
+                    {%if order.status == "INPROGRESS"%}
+                    <span class="pending">{{order.status}}</span>
+                    {%else%}
+                    <span class="complete">{{order.status}}</span>
+                    {%endif%}
+                </div>             
+            </a>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="overlay"></div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+
+        $('#dismiss, .overlay').on('click', function () {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+</script>
+{% endblock %}

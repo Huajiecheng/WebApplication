@@ -1,0 +1,133 @@
+{% extends "project/base.html" %}
+
+{% block navigatebar %} 
+<nav class="navbar navbar-light navbar-expand-md bg-light justify-content-md-center justify-content-start">
+    <a class="nav-link" id="sidebarCollapse" type="button"><i class="fa fa-bars fa-lg" aria-hidden="true"></i></a> 
+    <div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsingNavbar2">
+        <ul class="navbar-nav mx-auto text-md-center text-left">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' 'menu'%}">Menu</a>
+            </li>
+            <li class="nav-item my-auto">
+                <a class="nav-link navbar-brand mx-0 d-none d-md-inline" href="{% url 'home'%}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'map_location'%}">Location</a> 
+            </li>
+        </ul>
+        <ul class="nav navbar-nav flex-row justify-content-md-center justify-content-start flex-nowrap">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-shopping-cart"></i> Cart
+                </a>
+               
+                  <div class="dropdown-menu cart" aria-labelledby="navbarDropdownMenuLink">
+                    {% for item in cartItems%}
+                    <div>{{item.entry.name}} x {{item.quantity}}</div>
+                    {% endfor %}
+                    {%if count == 0 %}
+                        <div>No items in cart</div>
+                    {%else%}
+                    <form action="{% url 'payment'%}" method="POST">
+                        <button class="btn btn-primary" name="button" type="submit">checkout</button>
+                        {% csrf_token %}
+                    </form>
+                    {% endif %}
+                  </div>
+              </li>
+        </ul>
+    </div>
+</nav>
+
+
+{% endblock %}
+
+{% block content %}
+<nav id="sidebar">
+
+    <ul class="list-unstyled components">
+        <p>Hello, <span id = "id_logged_in_user_name">{{ user.first_name }} {{ user.last_name }}</span></p>
+        <li class="active">
+            <a href="{% url 'home' %}">Home</a>
+        </li>
+        <li>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'orders' %}">Orders</a>
+        </li>
+        <li>
+            <a href="{% url 'logout' %}" id = "id_nav_logout">Logout</a> 
+        </li>
+    </ul>
+</nav>
+ 
+    <script>
+        {% comment %} let map;
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: -34.397, lng: 150.644 },
+            zoom: 8,
+            });
+        } {% endcomment %}
+
+        var script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyA5hiyHNU-h_UMq1sdycWb_3P0qzVct4oU&callback=initMap';
+        script.defer = true;
+
+        // Attach your callback function to the `window` object
+        let map;
+        
+        // const silk_ele = { lat: {{latitude}}, lng: {{longitude}} };
+        const silk_ele = { lat: 40.437975, lng:  -79.923283};
+        
+        window.initMap = function() {
+        // JS API is loaded and available
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: silk_ele,
+                zoom: 15,
+            });
+            document.getElementById("map").style.display = 'block'
+            document.getElementById("map").style.overflow = 'scroll'
+            google.maps.event.trigger(map, 'resize');
+            
+            const marker = new google.maps.Marker({
+                position: silk_ele,
+                map: map
+            })
+
+            
+            console.log(document.getElementById("map").hidden);
+            console.log(document.getElementById("map").style.overflow);
+        };
+
+        // Append the 'script' element to 'head'
+        document.head.appendChild(script);
+
+        //initMap();
+
+       
+    $(document).ready(function () {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+
+        $('#dismiss, .overlay').on('click', function () {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    {% comment %} <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5hiyHNU-h_UMq1sdycWb_3P0qzVct4oU&callback=initMap&libraries=&v=weekly" defer></script> {% endcomment %}
+    {% comment %} <div style="height:100%; width:100%;"> {% endcomment %}
+    <div>
+        <div id="map" style="height:500px; width:700px; overflow: scroll; margin:auto"></div>
+    </div>
+    <div class="overlay"></div>
+{% endblock %}

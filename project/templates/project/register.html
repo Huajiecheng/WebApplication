@@ -1,0 +1,39 @@
+{% extends "project/base.html" %}
+
+
+{% block link %}
+    <div>
+        <a href="{% url 'login' %}" id = "id_login_link">Login</a>
+    </div>
+{% endblock %}
+
+{% block page %}
+    <div>
+        <span id = "id_name_of_page">Register</span>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="post" action="{% url 'register' %}">
+        <table>
+            {% for field in form.visible_fields %}
+                <tr>
+                    <td>{{field.label_tag}}</td>
+                    <td>{{field}}</td>
+                    <td class="errorlist">
+                        {% for error in field.errors %} {{error}} {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% csrf_token %}
+        <button type="submit" id="id_register_button">Register</button>
+    </form>
+
+    {% for error in form.non_field_errors %}
+        <p class="errorlist">
+            {{ error }}
+        </p>
+    {% endfor %}
+
+{% endblock %}

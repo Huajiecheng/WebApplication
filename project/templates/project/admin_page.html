@@ -1,0 +1,273 @@
+{% extends "project/base.html" %}
+
+
+{% block navigatebar %} 
+<nav class="navbar navbar-light navbar-expand-md bg-light justify-content-md-center justify-content-start">
+    <div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsingNavbar2">
+        <ul class="navbar-nav mx-auto text-md-center text-left">
+            <li class="nav-item">
+                <a class="nav-link notification" href="{%url 'admin_orders'%}">
+                    <span>Orders</span>
+                    {% if new_order_amount != 0 %}
+                    <span class="nav-link badge">{{new_order_amount}}</span>
+                    {% endif %}
+                </a>
+            </li>
+            <li class="nav-item my-auto">
+                <a class="nav-link navbar-brand mx-0 d-none d-md-inline" href="{%url 'admin'%}">Home</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav flex-row justify-content-md-center justify-content-start flex-nowrap">
+            <li class="nav-item"><span id = "id_logged_in_user_name">{{ user.first_name }} {{ user.last_name }}</span></li>
+            <li class="nav-item"><a href="{% url 'logout' %}" id = "id_nav_logout">Logout</a> </li>
+        </ul>
+    </div>
+</nav>
+
+{% endblock %}
+
+<!-- {% block page %}
+{% endblock %} -->
+
+{% block content %}
+
+<div class="mainContent">
+    {%if error %}
+    <div class="error"> {{error}} </div>
+    {% endif %}
+    {%if message %}
+    <div class="message"> {{message}} </div>
+    {% endif %}
+    <form enctype="multipart/form-data" method="post" action="{% url 'admin' %}">
+    <div class="row">
+        <div class="col">
+            {% if not restaurant.photo %}
+                <img class='res-img' src="../../static/project/no-image.png" alt="Image Unavailable">
+            {% else %}
+                <img class= 'res-img' src="{% url 'get-res-image' %}" alt="Silk Elephant">
+            {% endif %}
+            <div>
+                {{restaurantForm.photo}}
+            </div>
+        </div>
+        <div class="col resInfo">
+            <div id="res-name">
+                {{restaurantForm.name}}
+            </div>
+            <div id="res-rating">
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star"></span>
+                <span class="fa fa-star"></span>
+                &nbsp;&nbsp;{{restaurant.average_rating}}({{restaurant.num_review}})
+            </div>
+            <div>
+                <ul>
+                    <li id="res-address">{{restaurantForm.location}}</li>
+                    <li id="res-description">{{restaurantForm.description}}</li>
+                    <li id="res-deliveryTime"> {{restaurantForm.deliveryTime}}</li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+
+    <div>
+        <input id = "update_restaurant_button" type="submit" value="Submit">
+    </div>
+    
+    {% csrf_token %}
+    </form>
+
+    <!-- show menu/reviews based on navigation -->
+    {% if option == 'menu'%}
+    <nav class="nav nav-pills nav-justified switchbar navSwitch">
+        <a class="nav-item nav-link active" href="{% url 'admin' 'menu'%}">Menu</a>
+        <a class="nav-item nav-link" href="{% url 'admin' 'review'%}">Reviews</a>
+    </nav>
+
+    <!-- add entry button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddEntryModal">
+            Add Entry
+        </button>
+
+
+    {% for type in entry_types %}
+    <div class="entry-types">
+        <h3>{{type}}</h3>
+        <div class="row">
+            {% for entry in entries %}
+            {% if entry.entry_type == type%}
+            <form enctype="multipart/form-data" method="post" action="{% url 'delete-entry' entry.id%}">
+            <div class="card entry" style="width: 18rem;">
+                <div class="card-body">
+                    <input type="submit" class="close" value="X"></input>
+                    {% csrf_token %}
+                    <h5 class="card-title name">{{entry.name}}</h5>
+                    <p class="card-text description">{{entry.description}}</p>
+                    <h6 class="card-subtitle mb-2 text-muted price">${{entry.price}}</h6>
+                    <a href="{% url 'edit-entry' entry.id%}">edit</a>
+                </div>
+            </div>
+            </form>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+
+
+    
+    {% elif option == 'review'%}
+    <nav class="nav nav-pills nav-justified switchbar navSwitch">
+        <a class="nav-item nav-link" href="{% url 'admin' 'menu'%}">Menu</a>
+        <a class="nav-item nav-link active" href="{% url 'admin' 'review'%}">Reviews</a>
+    </nav>
+
+    {% for review in reviews %}
+    <div class="row">
+        <div class="card review-card">
+            <div class="card-body " >
+                <div class="review">
+                    <div class="reviewHeader">
+                        <div class="reviewProfilePic">
+                            {% if review.profile.picture %}
+                                <img src="{% url 'get-photo' review.profile.id %}" width="70px" height="70px">
+                            {% else %}
+                                <img src="../../static/project/profile.jpg" width="70px" height="70px">
+                            {% endif %}
+                        </div>
+                        <div class="reviewInfo">
+                            <p>{{review.profile.user.username}}</p>
+                            <p class="reviewDate">{{review.review_time}}</p>
+                            <div data-rating={{review.rating}} class="reviewRating">
+                                <span class="fa fa-star"></span>
+                                <span class="fa fa-star"></span>
+                                <span class="fa fa-star"></span>
+                                <span class="fa fa-star"></span>
+                                <span class="fa fa-star"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="reviewText">{{review.review_text}}</p>
+                </div>
+                <div class="row">
+                {% for image in review.images.all %}
+                <div>
+                    <img id="id_user_picture" src="{% url 'get-image' image.id %}" width = "200" height="200">
+                </div>
+                {% endfor%}
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    {% endfor %}
+
+
+    {% endif %}
+
+    <script>
+        $(document).ready(function(){
+            // rating stars
+            for(let score = 0; score <5; score++) {
+                if ("{{restaurant.average_rating}}" >= score+1) {
+                    $('#res-rating').find("span").eq(score).removeClass().addClass("fa fa-star checked")
+                }
+                else {
+                    $('#res-rating').find("span").eq(score).removeClass().addClass("fa fa-star")
+                }
+            }
+            $(".reviewRating").each(function() {
+                for(let score = 0; score <5; score++) {
+                    if ($(this).data('rating') >= score+1){
+                        $(this).find("span").eq(score).removeClass().addClass("fa fa-star checked")
+                    } 
+                    else{
+                        $(this).find("span").eq(score).removeClass().addClass("fa fa-star")
+                    }
+                }
+            });
+        });
+    </script>
+
+
+</div>
+
+    <!-- Add Entry Modal -->
+    <form enctype="multipart/form-data" method="post" action="{% url 'add-entry' %}">
+        <div class="modal fade" id="AddEntryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">What entry do you want to add?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table>
+                            {% for field in form.visible_fields %}
+                            <tr>
+                                <td>{{field.label_tag}}</td> 
+                                <td>{{field}}</td>
+                                <td class="error">
+                                    {% for error in field.errors %} {{error}} {% endfor %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% csrf_token %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input class="btn btn-primary" type="submit" value="Save changes"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {%if editEntry %}  
+    <script>
+        $(document).ready(function(){
+            $("#editModal").modal('show');
+        });
+    </script>
+   
+    <!-- Edit Entry Modal -->
+    <form enctype="multipart/form-data" method="post" action="{% url 'edit-entry' editEntry.id%}">
+        <div id="editModal" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Update Entry</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table>
+                            {% for field in editForm.visible_fields %}
+                            <tr>
+                                <td>{{field.label_tag}}</td> 
+                                <td>{{field}}</td>
+                                <td class="error">
+                                    {% for error in field.errors %} {{error}} {% endfor %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% csrf_token %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input class="btn btn-primary" type="submit" value="Save changes"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+{% endblock %}

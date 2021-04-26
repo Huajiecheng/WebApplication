@@ -1,0 +1,38 @@
+from django.urls import path
+from project import views
+
+urlpatterns = [
+    path('admin', views.admin_page, name='admin'),
+    path('admin/<str:option>', views.admin_page, name='admin'),
+    path('add-entry', views.add_entry, name='add-entry'),
+    path('edit-entry/<int:id>', views.edit_entry, name='edit-entry'),
+    path('delete-entry/<int:id>', views.delete_entry, name='delete-entry'),
+    path('add-to-cart', views.add_to_cart, name='add-to-cart'),
+    path('delete-cart-item/<int:id>', views.delete_cart_item, name='delete-cart-item'),
+    path('delete-all-items', views.delete_all_items, name='delete-all-items'),
+    path('edit-cart-item/<int:id>', views.edit_cart_item, name='edit-cart-item'),
+    path('', views.main_page, name='home'),
+    path('home/<str:option>', views.main_page, name='home'),
+    path('login', views.login_action, name='login'),
+    path('logout', views.logout_action, name='logout'),
+    path('register', views.register_action, name='register'),
+    path('payment', views.payment, name = 'payment'),
+    path('add-review', views.add_review, name = 'add-review'),
+    path('delete-review/<int:id>', views.delete_review, name = 'delete-review'),
+    path('review/image/<int:id>', views.get_image, name='get-image'),
+    path('photo/<int:id>', views.get_photo, name='get-photo'),
+    path('restaurant-image', views.get_res_image, name='get-res-image'),
+    path('done', views.payment_done, name = 'payment_done'),
+    path('cancelled', views.payment_cancelled, name = 'payment_cancelled'),
+    path('location', views.map_location, name = 'map_location'),
+    path('profile', views.profile, name = 'profile'),
+    path('orders',views.orders, name = 'orders'),
+    path('order/<int:id>',views.order, name = 'order'),
+    path('admin_orders',views.orders_stream, name = 'admin_orders'),
+    path('admin_order/<int:id>',views.admin_order,name = 'admin_order'),
+    path('refresh-orders',views.refresh_orders, name='r_orders' ),
+    path('refresh-done',views.refresh_done, name='r_done'),
+    path('add-address',views.add_address,name='add-address'),
+    path('order_completed_directions/<int:id>', views.directions, name = 'directions'),
+]
+

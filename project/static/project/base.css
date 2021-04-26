@@ -1,0 +1,319 @@
+/* div{
+    padding: 4px;
+} */
+
+button {
+    font-size: x-large;
+    padding: 3px;
+}
+.head{
+    background:lightblue;
+    text-align: left;
+    font-family: 'Ramabhadra', sans-serif;
+    font-size: 80px;
+    color:tomato;
+    padding-left: 50px;
+    background-image: url("../../static/project/main_photo_2.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 200px;
+    padding-top: 30px;
+
+}
+
+/* image in main page for the restaurant photo */
+.res-img{
+    width: 450px;
+    height: 300px;
+    border-radius: 50px;
+}
+table{
+    margin:auto;
+}
+/* .head{
+    background:lightblue;
+    text-align: center;
+    font-family: 'Goldman', cursive;
+    font-size: xx-large;
+    padding-left: 100px;
+
+} */
+
+
+.navigatebar li{
+    margin: 0 10px;
+}
+
+
+.link{
+    text-align: right;
+    padding-right: 100px;
+}
+
+
+.page{
+    text-align: center;
+    font-size: x-large;
+    padding-top:20px;
+    padding-bottom: 20px;
+}
+
+/* sidebar */
+#sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: 100vh;
+    z-index: 999;
+    background: white;
+    color: lightblue;
+    transition: all 0.3s;
+    overflow-y: scroll;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+}
+
+#sidebar.active {
+    left: 0;
+}
+
+
+.overlay {
+    display: none;
+    top:0;
+    left:0;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 998;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+}
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul p {
+    color: lightblue;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: lightblue;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: lightblue;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+/* ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #6d7fcc;
+} */
+
+.cart {
+    left:-80px;
+}
+
+.content {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: x-large;
+}
+
+
+.content .mainContent {
+    margin:auto;
+    width: 80vw;
+    text-align: center;
+    background:lightblue;
+}
+
+.content .mainContent .container {
+    position:relative;
+    margin:0 auto;
+}
+.content .mainContent .container .up_right{
+    position: absolute;
+    font-size: medium;
+    top:0px;
+    right:0px;
+    margin: 0px
+}
+.content .mainContent div {
+    margin: 10px;
+}
+
+.content .mainContent .resInfo {
+    text-align: left;
+}
+.content .mainContent #res-name {
+    font-family: 'Open Sans', sans-serif;
+    font-size: xx-large;
+    border-bottom: 5px solid red;
+}
+/* .content .mainContent #res-rating {
+    margin: 10px;
+} */
+.content .mainContent #res-rating .checked {
+    color: orange;
+}
+
+.content .mainContent .entry {
+    text-align: left;
+}
+.navSwitch {
+    margin-bottom: 20px;
+}
+
+.entry-types {
+    margin-left: 30px !important;
+    margin-right: 30px !important;
+    text-align: left !important;
+}
+.entry-types h3{
+    margin-left: 20px;
+}
+
+.errorlist {
+    color:red;
+}
+.error {
+    color:red;
+}
+.message {
+    color:green;
+}
+
+#my-modal {
+    display:block
+}
+
+#id_rating li {
+    display: inline-block;
+    zoom:1;
+    margin-left: 10px;
+    *display:inline;
+}
+
+.notification {
+    position: relative;
+}
+
+.notification .badge {
+    position: absolute;
+    top: -3px;
+    right: -10px;
+    padding: 5px 10px;
+    border-radius: 50%;
+    background: red;
+    color: white;
+}
+
+.order{
+    text-decoration:none;
+    display: inline-block;
+    border-radius: 10px;
+    border:1px solid #96C2F1;
+    background-color:#EFF7FF;
+    width:600px;
+    height:160px;
+    color: black;
+
+}
+
+.order:hover{
+    background-color:lightgrey;
+}
+
+.order .order_left{
+    text-align: left;
+    width:600px;
+    float:left;
+}
+
+.order .complete{
+    color: grey;
+}
+
+.order .pending{
+    color: lightgreen;   
+}
+
+.review-card{
+    width: 80%;
+    text-align:left;
+    margin:auto !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+}
+.review {
+    margin:0;
+}
+.reviewText{
+    margin:0;
+    padding-bottom:20px;
+    padding-left:20px;
+    border-bottom: 2px solid #a3ceb8;
+}
+.reviewHeader {
+    display:flex;
+}
+
+.reviewDate {
+    font-size:18px;
+    color: gray;
+}
+.reviewProfilePic  img{
+    border-radius: 100%;
+}
+.reviewRating {
+    top:50px;
+    right:120px;
+    position: absolute;
+}
+.reviewRating .checked {
+    color: orange;
+}
+
+.reviewInfo {
+    margin-left: 10px;
+}
+.reviewInfo p{
+    margin:0;
+}
+#parent_div {
+    margin-top: 50px;
+}
+#map {
+    margin: auto !important;
+    overflow: scroll;
+}

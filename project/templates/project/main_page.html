@@ -1,0 +1,270 @@
+{% extends "project/base.html" %}
+
+
+{% block navigatebar %} 
+<nav class="navbar navbar-light navbar-expand-md bg-light justify-content-md-center justify-content-start">
+    <a class="nav-link" id="sidebarCollapse" type="button"><i class="fa fa-bars fa-lg" aria-hidden="true"></i></a> 
+    <div class="navbar-collapse collapse justify-content-between align-items-center w-100" id="collapsingNavbar2">
+        <ul class="navbar-nav mx-auto text-md-center text-left">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' 'menu'%}" >Menu</a>
+            </li>
+            <li class="nav-item my-auto">
+                <a class="nav-link navbar-brand mx-0 d-none d-md-inline" href="{% url 'home'%}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'map_location'%}">Location</a> 
+            </li>
+        </ul>
+        <ul class="nav navbar-nav flex-row justify-content-md-center justify-content-start flex-nowrap">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-shopping-cart"></i> Cart
+                </a>
+               
+                  <div class="dropdown-menu cart" aria-labelledby="navbarDropdownMenuLink">
+                    {% for item in cartItems%}
+                    <div>{{item.entry.name}} x {{item.quantity}}</div>
+                    {% endfor %}
+                    {%if count == 0 %}
+                        <div>No items in cart</div>
+                    {%else%}
+                    <form action="{% url 'payment'%}" method="POST">
+                        <button class="btn btn-primary" name="button" type="submit">checkout</button>
+                        {% csrf_token %}
+                    </form>
+                    {% endif %}
+                  </div>
+              </li>
+        </ul>
+    </div>
+</nav>
+
+
+
+{% endblock %}
+
+
+<!-- {% block page %}
+{% endblock %} -->
+
+{% block content %}
+
+<div class="wrapper">
+ <!-- Sidebar -->
+ <nav id="sidebar">
+
+    <ul class="list-unstyled components">
+        <p>Hello, <span id = "id_logged_in_user_name">{{ user.first_name }} {{ user.last_name }}</span></p>
+        <li class="active">
+            <a href="{% url 'home' %}">Home</a>
+        </li>
+        <li>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'orders' %}">Orders</a>
+        </li>
+        <li>
+            <a href="{% url 'logout' %}" id = "id_nav_logout">Logout</a> 
+        </li>
+    </ul>
+</nav>
+
+    <!-- Page Content -->
+    <div class="mainContent">
+        <div class="row">
+            <div class="col">
+                {% if not restaurant.photo %}
+                    <img class='res-img' src="../../static/project/no-image.png" alt="Image Unavailable">
+                {% else %}
+                    <img class='res-img' src="../../static/project/SilkElephantMain.jpg" alt="Silk Elephant">
+                {% endif %}
+            </div>
+            <div class="col resInfo">
+                <div id="res-name">
+                    {{restaurant.name}}
+                </div>
+                <div id="res-rating">
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                    &nbsp;&nbsp;{{restaurant.average_rating}}({{restaurant.num_review}})
+                </div>
+                <div>
+                    <ul>
+                        <li id="res-address">{{restaurant.location}}</li>
+                        <li id="res-description">{{restaurant.description}}</li>
+                        <li id="res-deliveryTime"> {{restaurant.deliveryTime}}</li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+        
+        {% if option == 'menu'%}
+            <nav class="nav nav-pills nav-justified switchbar navSwitch">
+                <a class="nav-item nav-link active" href="{% url 'home' 'menu'%}">Menu</a>
+                <a class="nav-item nav-link" href="{% url 'home' 'review'%}">Reviews</a>
+            </nav>
+            {% for type in entry_types %}
+            <div class="entry-types">
+                <h3>{{type}}</h3>
+                <div class="row">
+                    {% for entry in entries %}
+                    {% if entry.entry_type == type%}
+                        <div class="card entry" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title name">{{entry.name}}</h5>
+                                <p class="card-text description">{{entry.description}}</p>
+                                <h6 class="card-subtitle mb-2 text-muted price">{{entry.price}}</h6>
+                            </div>
+                            
+                            <!-- <a href="{% url 'add-to-cart' %}" class="btn btn-primary stretched-link">Add</a> -->
+                            <button type="button" class="btn btn-primary stretched-link" data-toggle="modal" data-name="{{entry.name}}" data-id={{entry.id}} data-target="#addModal">
+                                Add
+                            </button>
+                        </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                
+            </div>
+            {% endfor %}
+
+        {% else %}
+        <nav class="nav nav-pills nav-justified switchbar navSwitch">
+            <a class="nav-item nav-link" href="{% url 'home' 'menu'%}">Menu</a>
+            <a class="nav-item nav-link active" href="{% url 'home' 'review'%}">Reviews</a>
+        </nav>
+        
+        {% for review in reviews %}
+        <div class="row">
+            <div class="card review-card">
+                <div class="card-body " >
+                    {% if review.profile.user == user %}
+                    <form enctype="multipart/form-data" method="post" action="{% url 'delete-review' review.id%}">
+                    <input type="submit" class="close" value="X"/>
+                    {% csrf_token %}
+                    </form>
+                    {% endif %}
+                    <div class="review">
+                        <div class="reviewHeader">
+                            <div class="reviewProfilePic">
+                                {% if review.profile.picture %}
+                                    <img src="{% url 'get-photo' review.profile.id %}" width="70px" height="70px">
+                                {% else %}
+                                    <img src="../../static/project/profile.jpg" width="70px" height="70px">
+                                {% endif %}
+                            </div>
+                            <div class="reviewInfo">
+                                <p>{{review.profile.user.username}}</p>
+                                <p class="reviewDate">{{review.review_time}}</p>
+                                <div data-rating={{review.rating}} class="reviewRating">
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="reviewText">{{review.review_text}}</p>
+                    </div>
+                    <div class="row">
+                    {% for image in review.images.all %}
+                    <div>
+                        <img id="id_user_picture" src="{% url 'get-image' image.id %}" width = "200" height="200">
+                    </div>
+                    {% endfor%}
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+
+
+
+        {% endif %}
+    </div>
+    <div class="overlay"></div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form enctype="multipart/form-data" id="add_form" action="{% url 'add-to-cart' %}" method="POST">
+            <div class="modal-body">
+                <input type="hidden" name="add_entry_id" value=""/>
+                <div class="row">
+                    <div class="col"> Quantity: </div>
+                    <div class="col">
+                        <input type="number" name="add_entry_count" min="1" max="20" step="1" value="1"/>
+                    </div>
+            </div>
+                {% csrf_token %}
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <input class="btn btn-primary" type="submit" value="Add to Cart"/>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    // sidebar
+    $(document).ready(function () {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+
+        $('#dismiss, .overlay').on('click', function () {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+        // rating stars
+        for(let score = 0; score <5; score++) {
+            if ("{{restaurant.average_rating}}" >= score+1) {
+                $('#res-rating').find("span").eq(score).removeClass().addClass("fa fa-star checked")
+            }
+            else {
+                $('#res-rating').find("span").eq(score).removeClass().addClass("fa fa-star")
+            }
+        }
+        $(".reviewRating").each(function() {
+            for(let score = 0; score <5; score++) {
+                if ($(this).data('rating') >= score+1){
+                    $(this).find("span").eq(score).removeClass().addClass("fa fa-star checked")
+                } 
+                else{
+                    $(this).find("span").eq(score).removeClass().addClass("fa fa-star")
+                }
+            }
+        });
+    });
+    // modal show
+    $('#addModal').on('show.bs.modal', function (event) {
+        var entryName = $(event.relatedTarget).data('name');
+        var entryId = $(event.relatedTarget).data('id');
+        $(this).find(".modal-title").text(entryName);
+        $(event.currentTarget).find('input[name="add_entry_id"]').val(entryId);
+    });
+
+</script>
+{% endblock %}
